@@ -49,6 +49,9 @@ _llvm_distributions = {
     "clang+llvm-7.0.0-x86_64-linux-sles11.3.tar.xz": "1a0a94a5cef357b885d02cf46b66109b6233f0af8f02be3da08e2daf646b5cf8",
     "clang+llvm-7.0.0-x86_64-linux-sles12.3.tar.xz": "1c303f1a7b90f0f1988387dfab16f1eadbe2b2152d86a323502068379941dd17",
 
+    # 7.0.1
+    "clang+llvm-7.0.1-x86_64-linux-gnu-ubuntu-18.04.tar.xz": "e74ce06d99ed9ce42898e22d2a966f71ae785bdf4edbded93e628d696858921a",
+
     # 8.0.0
     "clang+llvm-8.0.0-aarch64-linux-gnu.tar.xz": "998e9ae6e89bd3f029ed031ad9355c8b43441302c0e17603cf1de8ee9939e5c9",
     "clang+llvm-8.0.0-amd64-unknown-freebsd11.tar.xz": "af15d14bd25e469e35ed7c43cb7e035bc1b2aa7b55d26ad597a43e72768750a8",
