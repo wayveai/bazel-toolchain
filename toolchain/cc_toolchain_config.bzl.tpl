@@ -280,7 +280,7 @@ def _impl(ctx):
                 actions = all_cpp_compile_actions,
                             # Vinh - setting default to stdc++ until we remove ROS2 dependencies
                 #flag_groups = [flag_group(flags = ["-std=c++17", "-stdlib=libc++"])],
-                flag_groups = [flag_group(flags = ["-std=c++17", "-stdlib=libstdc++])],
+                flag_groups = [flag_group(flags = ["-std=c++17", "-stdlib=libstdc++"])],
             ),
         ],
     )
