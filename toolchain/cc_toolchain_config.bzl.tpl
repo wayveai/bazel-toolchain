@@ -150,8 +150,10 @@ def _impl(ctx):
             "-fuse-ld=lld",
             # The linker has no way of knowing if there are C++ objects; so we always link C++ libraries.
             "-L%{toolchain_path_prefix}/lib",
-            "-l:libc++.a",
-            "-l:libc++abi.a",
+            # Vinh - setting default to stdc++ until we remove ROS2 dependencies
+            #"-l:libc++.a",
+            #"-l:libc++abi.a",
+            "-lstdc++",
             "-l:libunwind.a",
             # Compiler runtime features.
             "-rtlib=compiler-rt",
@@ -276,7 +278,9 @@ def _impl(ctx):
             ),
             flag_set(
                 actions = all_cpp_compile_actions,
-                flag_groups = [flag_group(flags = ["-std=c++17", "-stdlib=libc++"])],
+                            # Vinh - setting default to stdc++ until we remove ROS2 dependencies
+                #flag_groups = [flag_group(flags = ["-std=c++17", "-stdlib=libc++"])],
+                flag_groups = [flag_group(flags = ["-std=c++17", "-stdlib=libstdc++])],
             ),
         ],
     )
