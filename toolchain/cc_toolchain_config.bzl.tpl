@@ -148,18 +148,7 @@ def _impl(ctx):
         linker_flags = [
             # Use the lld linker.
             "-fuse-ld=lld",
-            # The linker has no way of knowing if there are C++ objects; so we always link C++ libraries.
-            "-L%{toolchain_path_prefix}/lib",
-            # Vinh - setting default to stdc++ until we remove ROS2 dependencies
-            #"-l:libc++.a",
-            #"-l:libc++abi.a",
             "-lstdc++",
-            "-l:libunwind.a",
-            # Compiler runtime features.
-            "-rtlib=compiler-rt",
-            # To support libunwind.
-            "-lpthread",
-            "-ldl",
             # Other linker flags.
             "-Wl,--build-id=md5",
             "-Wl,--hash-style=gnu",
