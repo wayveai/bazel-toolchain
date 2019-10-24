@@ -243,8 +243,8 @@ def _impl(ctx):
                             "-Wall",
                             "-Wthread-safety",
                             "-Wself-assign",
-                            "-ffunction-sections",
-                            "-fdata-sections",
+                            # Wayve
+                            "-Werror",
                         ],
                     ),
                 ],
@@ -272,7 +272,14 @@ def _impl(ctx):
             ),
             flag_set(
                 actions = all_cpp_compile_actions,
-                flag_groups = [flag_group(flags = ["-std=c++17", "-stdlib=libstdc++"])],
+                flag_groups = [
+                    flag_group(
+                        flags = [
+                            "-std=c++17",
+                            "-stdlib=libstdc++",
+                        ]
+                    )
+                ],
             ),
         ],
     )
