@@ -150,14 +150,7 @@ def _impl(ctx):
             "-fuse-ld=lld",
             # The linker has no way of knowing if there are C++ objects; so we always link C++ libraries.
             "-L%{toolchain_path_prefix}/lib",
-            "-l:libc++.a",
-            "-l:libc++abi.a",
-            "-l:libunwind.a",
-            # Compiler runtime features.
-            "-rtlib=compiler-rt",
-            # To support libunwind.
-            "-lpthread",
-            "-ldl",
+            "-lstdc++",
             # Other linker flags.
             "-Wl,--build-id=md5",
             "-Wl,--hash-style=gnu",
@@ -192,7 +185,7 @@ def _impl(ctx):
                 flag_groups = [
                     flag_group(
                         flags = [
-                            # Do not resolve our smylinked resource prefixes to real paths.
+                            # Do not resolve our symlinked resource prefixes to real paths.
                             "-no-canonical-prefixes",
                             # Reproducibility
                             "-Wno-builtin-macro-redefined",
@@ -276,7 +269,7 @@ def _impl(ctx):
             ),
             flag_set(
                 actions = all_cpp_compile_actions,
-                flag_groups = [flag_group(flags = ["-std=c++17", "-stdlib=libc++"])],
+                flag_groups = [flag_group(flags = ["-std=c++17", "-stdlib=libstdc++"])],
             ),
         ],
     )
