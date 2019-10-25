@@ -504,6 +504,7 @@ def _impl(ctx):
         unfiltered_compile_flags_feature,
         default_link_flags_feature,
         default_compile_flags_feature,
+        security_compile_flags_feature,
         objcopy_embed_flags_feature,
         user_compile_flags_feature,
         sysroot_feature,
