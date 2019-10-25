@@ -176,6 +176,8 @@ def _impl(ctx):
     supports_pic_feature = feature(name = "supports_pic", enabled = True)
     supports_dynamic_linker_feature = feature(name = "supports_dynamic_linker", enabled = True)
 
+    cpp17_feature = feature(name = "c++17", enabled = True)
+
     unfiltered_compile_flags_feature = feature(
         name = "unfiltered_compile_flags",
         enabled = True,
@@ -227,26 +229,80 @@ def _impl(ctx):
     default_compile_flags_feature = feature(
         name = "default_compile_flags",
         enabled = True,
-        implies = [
-            "security_compile_flags",
+        flag_sets = [
+            flag_set(
+                actions = all_cpp_compile_actions,
+                flag_groups = [
+                    flag_group(
+                        flags = [
+                            "-stdlib=libstdc++",
+                        ]
+                    )
+                ],
+            ),
         ],
+    )
+
+    security_compile_flags_feature = feature(
+        name = "security_compile_flags",
+        enabled = True,
         flag_sets = [
             flag_set(
                 actions = all_compile_actions,
                 flag_groups = [
                     flag_group(
                         flags = [
-                            # Diagnostics
+                            "-U_FORTIFY_SOURCE",  # https://github.com/google/sanitizers/issues/247
+                            "-fstack-protector",
+                            "-fno-omit-frame-pointer",
+                        ],
+                    ),
+                ],
+            ),
+        ],
+    )
+
+    diagnostic_compile_flags_feature = feature(
+        name = "diagnostic_compile_flags",
+        enabled = True,
+        flag_sets = [
+            flag_set(
+                actions = all_compile_actions,
+                flag_groups = [
+                    flag_group(
+                        flags = [
                             "-fcolor-diagnostics",
                             "-Wall",
                             "-Wthread-safety",
                             "-Wself-assign",
-                            # Wayve
+                        ],
+                    ),
+                ],
+            ),
+        ],
+    )
+
+    pedantry_compile_flags_feature = feature(
+        name = "pedantry_compile_flags",
+        enabled = True,
+        flag_sets = [
+            flag_set(
+                actions = all_compile_actions,
+                flag_groups = [
+                    flag_group(
+                        flags = [
                             "-Werror",
                         ],
                     ),
                 ],
             ),
+        ],
+    )
+
+    optimisation_compile_flags_feature = feature(
+        name = "optimisation_compile_flags",
+        enabled = True,
+        flag_sets = [
             flag_set(
                 actions = all_compile_actions,
                 flag_groups = [flag_group(flags = ["-g", "-fstandalone-debug"])],
@@ -268,36 +324,22 @@ def _impl(ctx):
                 ],
                 with_features = [with_feature_set(features = ["opt"])],
             ),
-            flag_set(
-                actions = all_cpp_compile_actions,
-                flag_groups = [
-                    flag_group(
-                        flags = [
-                            "-std=c++17",
-                            "-stdlib=libstdc++",
-                        ]
-                    )
-                ],
-            ),
         ],
     )
 
-    security_compile_flags_feature = feature(
-        name = "security_compile_flags",
+    cpp_standard_compile_flags = feature(
+        name = "cpp_standard_compile_flags",
         flag_sets = [
             flag_set(
-                actions = all_compile_actions,
+                actions = all_cpp_compile_actions,
                 flag_groups = [
-                    flag_group(
-                        flags = [
-                            "-U_FORTIFY_SOURCE",  # https://github.com/google/sanitizers/issues/247
-                            "-fstack-protector",
-                            "-fno-omit-frame-pointer",
-                        ],
-                    ),
+                    flags = [
+                        "-std=c++17",
+                    ],
                 ],
+                with_features = [with_feature_set(features = "c++17")],
             ),
-        ]
+        ],
     )
 
     objcopy_embed_flags_feature = feature(
@@ -505,6 +547,10 @@ def _impl(ctx):
         default_link_flags_feature,
         default_compile_flags_feature,
         security_compile_flags_feature,
+        pedantry_compile_flags_feature,
+        optimisation_compile_flags_feature,
+        diagnostic_compile_flags_feature,
+        cpp_standard_compile_flags
         objcopy_embed_flags_feature,
         user_compile_flags_feature,
         sysroot_feature,
