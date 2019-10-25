@@ -339,7 +339,7 @@ def _impl(ctx):
                         ],
                     ),
                 ],
-                with_features = [with_feature_set(features = "c++17")],
+                with_features = [with_feature_set(features = ["c++17"])],
             ),
         ],
     )
