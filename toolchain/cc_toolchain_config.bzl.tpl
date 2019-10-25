@@ -546,6 +546,7 @@ def _impl(ctx):
         random_seed_feature,
         supports_pic_feature,
         supports_dynamic_linker_feature,
+        cpp17_feature,
         unfiltered_compile_flags_feature,
         default_link_flags_feature,
         default_compile_flags_feature,
