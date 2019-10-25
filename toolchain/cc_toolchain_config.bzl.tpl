@@ -329,6 +329,7 @@ def _impl(ctx):
 
     cpp_standard_compile_flags = feature(
         name = "cpp_standard_compile_flags",
+        enabled = True,
         flag_sets = [
             flag_set(
                 actions = all_cpp_compile_actions,
