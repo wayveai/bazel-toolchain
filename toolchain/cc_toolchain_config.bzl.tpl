@@ -182,30 +182,6 @@ def _impl(ctx):
     libstdcpp_feature = feature(name = "libstdc++", enabled = True, provides = ["cpp_standard_library"])
     libcpp_feature = feature(name = "libc++", enabled = False, provides = ["cpp_standard_library"])
 
-    unfiltered_compile_flags_feature = feature(
-        name = "unfiltered_compile_flags",
-        enabled = True,
-        flag_sets = [
-            flag_set(
-                actions = all_compile_actions,
-                flag_groups = [
-                    flag_group(
-                        flags = [
-                            # Do not resolve our symlinked resource prefixes to real paths.
-                            "-no-canonical-prefixes",
-                            # Reproducibility
-                            "-Wno-builtin-macro-redefined",
-                            "-D__DATE__=\"redacted\"",
-                            "-D__TIMESTAMP__=\"redacted\"",
-                            "-D__TIME__=\"redacted\"",
-                            "-fdebug-prefix-map=%{toolchain_path_prefix}=%{debug_toolchain_path_prefix}",
-                        ],
-                    ),
-                ],
-            ),
-        ],
-    )
-
     default_link_flags_feature = feature(
         name = "default_link_flags",
         enabled = True,
@@ -243,6 +219,30 @@ def _impl(ctx):
                 actions = all_link_actions,
                 flag_groups = [flag_group(flags = ["-lc++"])],
                 with_features = [with_feature_set(features = ["libc++"])],
+            ),
+        ],
+    )
+
+    unfiltered_compile_flags_feature = feature(
+        name = "unfiltered_compile_flags",
+        enabled = True,
+        flag_sets = [
+            flag_set(
+                actions = all_compile_actions,
+                flag_groups = [
+                    flag_group(
+                        flags = [
+                            # Do not resolve our symlinked resource prefixes to real paths.
+                            "-no-canonical-prefixes",
+                            # Reproducibility
+                            "-Wno-builtin-macro-redefined",
+                            "-D__DATE__=\"redacted\"",
+                            "-D__TIMESTAMP__=\"redacted\"",
+                            "-D__TIME__=\"redacted\"",
+                            "-fdebug-prefix-map=%{toolchain_path_prefix}=%{debug_toolchain_path_prefix}",
+                        ],
+                    ),
+                ],
             ),
         ],
     )
@@ -350,7 +350,7 @@ def _impl(ctx):
     )
 
     cpp_standard_library_compile_flags_feature = feature(
-        name = "cpp_standard_compile_flags",
+        name = "cpp_standard_library_compile_flags",
         enabled = True,
         flag_sets = [
             flag_set(
