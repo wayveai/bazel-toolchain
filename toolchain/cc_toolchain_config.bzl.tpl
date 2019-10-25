@@ -150,7 +150,6 @@ def _impl(ctx):
             "-fuse-ld=lld",
             # The linker has no way of knowing if there are C++ objects; so we always link C++ libraries.
             "-L%{toolchain_path_prefix}/lib",
-            "-lstdc++",
             # Other linker flags.
             "-Wl,--build-id=md5",
             "-Wl,--hash-style=gnu",
@@ -176,7 +175,12 @@ def _impl(ctx):
     supports_pic_feature = feature(name = "supports_pic", enabled = True)
     supports_dynamic_linker_feature = feature(name = "supports_dynamic_linker", enabled = True)
 
-    cpp17_feature = feature(name = "c++17", enabled = True)
+    cpp_standard_feature = feature(name = "cpp_standard", enabled = True)
+    cpp17_feature = feature(name = "c++17", enabled = True, provides = ["cpp_standard"])
+
+    cpp_standard_library_feature = feature(name = "cpp_standard_library", enabled = True)
+    libstdcpp_feature = feature(name = "libstdc++", enabled = True, provides = ["cpp_standard_library"])
+    libcpp_feature = feature(name = "libc++", enabled = False, provides = ["cpp_standard_library"])
 
     unfiltered_compile_flags_feature = feature(
         name = "unfiltered_compile_flags",
@@ -226,19 +230,19 @@ def _impl(ctx):
         ] if ctx.attr.cpu == "k8" else []),
     )
 
-    default_compile_flags_feature = feature(
-        name = "default_compile_flags",
+    cpp_standard_library_link_flags_feature = feature(
+        name = "cpp_standard_link_flags",
         enabled = True,
         flag_sets = [
             flag_set(
-                actions = all_cpp_compile_actions,
-                flag_groups = [
-                    flag_group(
-                        flags = [
-                            "-stdlib=libstdc++",
-                        ]
-                    )
-                ],
+                actions = all_link_actions,
+                flag_groups = [flag_group(flags = ["-lstdc++"])],
+                with_features = [with_feature_set(features = ["libstdc++"])],
+            ),
+            flag_set(
+                actions = all_link_actions,
+                flag_groups = [flag_group(flags = ["-lc++"])],
+                with_features = [with_feature_set(features = ["libc++"])],
             ),
         ],
     )
@@ -327,7 +331,7 @@ def _impl(ctx):
         ],
     )
 
-    cpp_standard_compile_flags = feature(
+    cpp_standard_compile_flags_feature = feature(
         name = "cpp_standard_compile_flags",
         enabled = True,
         flag_sets = [
@@ -341,6 +345,23 @@ def _impl(ctx):
                     ),
                 ],
                 with_features = [with_feature_set(features = ["c++17"])],
+            ),
+        ],
+    )
+
+    cpp_standard_library_compile_flags_feature = feature(
+        name = "cpp_standard_compile_flags",
+        enabled = True,
+        flag_sets = [
+            flag_set(
+                actions = all_cpp_compile_actions,
+                flag_groups = [flag_group(flags = ["-stdlib=libstdc++"])],
+                with_features = [with_feature_set(features = ["libstdc++"])],
+            ),
+            flag_set(
+                actions = all_cpp_compile_actions,
+                flag_groups = [flag_group(flags = ["-stdlib=libc++"])],
+                with_features = [with_feature_set(features = ["libc++"])],
             ),
         ],
     )
@@ -546,15 +567,20 @@ def _impl(ctx):
         random_seed_feature,
         supports_pic_feature,
         supports_dynamic_linker_feature,
+        cpp_standard_feature,
         cpp17_feature,
+        cpp_standard_library_feature,
+        libstdcpp_feature,
+        libcpp_feature,
         unfiltered_compile_flags_feature,
         default_link_flags_feature,
-        default_compile_flags_feature,
+        cpp_standard_library_link_flags_feature,
         security_compile_flags_feature,
         pedantry_compile_flags_feature,
         optimisation_compile_flags_feature,
         diagnostic_compile_flags_feature,
-        cpp_standard_compile_flags,
+        cpp_standard_compile_flags_feature,
+        cpp_standard_library_compile_flags_feature
         objcopy_embed_flags_feature,
         user_compile_flags_feature,
         sysroot_feature,
