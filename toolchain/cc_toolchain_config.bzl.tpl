@@ -155,7 +155,6 @@ def _impl(ctx):
             "-Wl,--build-id=md5",
             "-Wl,--hash-style=gnu",
             "-Wl,-z,relro,-z,now",
-            "-Wl,--gc-sections",
         ]
     elif ctx.attr.cpu == "darwin":
         linker_flags = [
