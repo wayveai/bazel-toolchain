@@ -229,7 +229,7 @@ def _impl(ctx):
         enabled = True,
         implies = [
             security_compile_flags_feature,
-        ]
+        ],
         flag_sets = [
             flag_set(
                 actions = all_compile_actions,
