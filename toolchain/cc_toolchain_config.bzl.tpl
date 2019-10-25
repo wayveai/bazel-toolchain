@@ -333,9 +333,11 @@ def _impl(ctx):
             flag_set(
                 actions = all_cpp_compile_actions,
                 flag_groups = [
-                    flags = [
-                        "-std=c++17",
-                    ],
+                    flag_group(
+                        flags = [
+                            "-std=c++17",
+                        ],
+                    ),
                 ],
                 with_features = [with_feature_set(features = "c++17")],
             ),
@@ -550,7 +552,7 @@ def _impl(ctx):
         pedantry_compile_flags_feature,
         optimisation_compile_flags_feature,
         diagnostic_compile_flags_feature,
-        cpp_standard_compile_flags
+        cpp_standard_compile_flags,
         objcopy_embed_flags_feature,
         user_compile_flags_feature,
         sysroot_feature,
