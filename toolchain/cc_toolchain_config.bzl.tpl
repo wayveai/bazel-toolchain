@@ -227,16 +227,15 @@ def _impl(ctx):
     default_compile_flags_feature = feature(
         name = "default_compile_flags",
         enabled = True,
+        implies = [
+            security_compile_flags_feature,
+        ]
         flag_sets = [
             flag_set(
                 actions = all_compile_actions,
                 flag_groups = [
                     flag_group(
                         flags = [
-                            # Security
-                            "-U_FORTIFY_SOURCE",  # https://github.com/google/sanitizers/issues/247
-                            "-fstack-protector",
-                            "-fno-omit-frame-pointer",
                             # Diagnostics
                             "-fcolor-diagnostics",
                             "-Wall",
@@ -281,6 +280,24 @@ def _impl(ctx):
                 ],
             ),
         ],
+    )
+
+    security_compile_flags_feature = feature(
+        name = "security_compile_flags",
+        flag_sets = [
+            flag_set(
+                actions = all_compile_actions,
+                flag_groups = [
+                    flag_group(
+                        flags = [
+                            "-U_FORTIFY_SOURCE",  # https://github.com/google/sanitizers/issues/247
+                            "-fstack-protector",
+                            "-fno-omit-frame-pointer",
+                        ],
+                    ),
+                ],
+            ),
+        ]
     )
 
     objcopy_embed_flags_feature = feature(
