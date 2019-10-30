@@ -273,7 +273,7 @@ def _impl(ctx):
 
     pedantry_compile_flags_feature = feature(
         name = "pedantry_compile_flags",
-        enabled = True,
+        enabled = False,  # enabled = True,
         flag_sets = [flag_set(
             actions = all_compile_actions,
             flag_groups = [flag_group(flags = [
