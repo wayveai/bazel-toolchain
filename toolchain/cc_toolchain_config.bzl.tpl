@@ -263,7 +263,6 @@ def _impl(ctx):
             flag_groups = [flag_group(flags = [
                 "-fcolor-diagnostics",
                 "-Wall",
-                "-Wextra",
                 "-Werror",
                 "-Wthread-safety",
                 "-Wself-assign",
