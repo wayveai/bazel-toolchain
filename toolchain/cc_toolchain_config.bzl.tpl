@@ -201,7 +201,7 @@ def _impl(ctx):
         ] + ([
             flag_set(
                 actions = all_link_actions,
-                # flag_groups = [flag_group(flags = ["-Wl,--gc-sections"])],
+                flag_groups = [flag_group(flags = ["-Wl,--gc-sections"])],
                 with_features = [with_feature_set(features = ["opt"])],
             ),
         ] if ctx.attr.cpu == "k8" else []),
@@ -272,7 +272,7 @@ def _impl(ctx):
 
     pedantry_compile_flags_feature = feature(
         name = "pedantry_compile_flags",
-        enabled = False,  # enabled = True,
+        enabled = False,
         flag_sets = [flag_set(
             actions = all_compile_actions,
             flag_groups = [flag_group(flags = [
