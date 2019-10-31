@@ -175,6 +175,8 @@ def _impl(ctx):
     supports_pic_feature = feature(name = "supports_pic", enabled = True)
     supports_dynamic_linker_feature = feature(name = "supports_dynamic_linker", enabled = True)
 
+    pedantry_feature = feature(name = "pedantry", enabled = False)
+
     cpp_standard_feature = feature(name = "cpp_standard", enabled = True)
     cpp17_feature = feature(name = "c++17", enabled = True, provides = ["cpp_standard"])
 
@@ -272,13 +274,14 @@ def _impl(ctx):
 
     pedantry_compile_flags_feature = feature(
         name = "pedantry_compile_flags",
-        enabled = False,
+        enabled = True,
         flag_sets = [flag_set(
             actions = all_compile_actions,
             flag_groups = [flag_group(flags = [
                 "-Wextra",
                 "-Wpedantic",
             ])],
+            with_features = [with_feature_set(features = ["pedantry"])],
         )],
     )
 
@@ -510,6 +513,7 @@ def _impl(ctx):
         random_seed_feature,
         supports_pic_feature,
         supports_dynamic_linker_feature,
+        pedantry_feature,
         cpp_standard_feature,
         cpp17_feature,
         cpp_standard_library_feature,
