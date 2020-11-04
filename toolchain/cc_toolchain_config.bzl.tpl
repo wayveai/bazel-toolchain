@@ -150,14 +150,6 @@ def _impl(ctx):
             "-fuse-ld=lld",
             # The linker has no way of knowing if there are C++ objects; so we always link C++ libraries.
             "-L%{toolchain_path_prefix}/lib",
-            "-l:libc++.a",
-            "-l:libc++abi.a",
-            "-l:libunwind.a",
-            # Compiler runtime features.
-            "-rtlib=compiler-rt",
-            # To support libunwind.
-            "-lpthread",
-            "-ldl",
             # Other linker flags.
             "-Wl,--build-id=md5",
             "-Wl,--hash-style=gnu",
@@ -183,29 +175,16 @@ def _impl(ctx):
     supports_pic_feature = feature(name = "supports_pic", enabled = True)
     supports_dynamic_linker_feature = feature(name = "supports_dynamic_linker", enabled = True)
 
-    unfiltered_compile_flags_feature = feature(
-        name = "unfiltered_compile_flags",
-        enabled = True,
-        flag_sets = [
-            flag_set(
-                actions = all_compile_actions,
-                flag_groups = [
-                    flag_group(
-                        flags = [
-                            # Do not resolve our smylinked resource prefixes to real paths.
-                            "-no-canonical-prefixes",
-                            # Reproducibility
-                            "-Wno-builtin-macro-redefined",
-                            "-D__DATE__=\"redacted\"",
-                            "-D__TIMESTAMP__=\"redacted\"",
-                            "-D__TIME__=\"redacted\"",
-                            "-fdebug-prefix-map=%{toolchain_path_prefix}=%{debug_toolchain_path_prefix}",
-                        ],
-                    ),
-                ],
-            ),
-        ],
-    )
+    pedantry_feature = feature(name = "pedantry", enabled = False)
+
+    cpp_standard_feature = feature(name = "cpp_standard", enabled = True)
+    cpp17_feature = feature(name = "c++17", enabled = True, provides = ["cpp_standard"])
+
+    cpp_standard_library_feature = feature(name = "cpp_standard_library", enabled = True)
+    libstdcpp_feature = feature(name = "libstdc++", enabled = True, provides = ["cpp_standard_library"])
+    libcpp_feature = feature(name = "libc++", enabled = False, provides = ["cpp_standard_library"])
+
+    common_clibs_feature = feature(name = "common_clibs", enabled = False)
 
     default_link_flags_feature = feature(
         name = "default_link_flags",
@@ -218,7 +197,8 @@ def _impl(ctx):
                         flags = [
                             "-lm",
                             "-no-canonical-prefixes",
-                        ] + linker_flags,
+                        ] +
+                        linker_flags,
                     ),
                 ],
             ),
@@ -231,28 +211,96 @@ def _impl(ctx):
         ] if ctx.attr.cpu == "k8" else []),
     )
 
-    default_compile_flags_feature = feature(
-        name = "default_compile_flags",
+    cpp_standard_library_link_flags_feature = feature(
+        name = "cpp_standard_link_flags",
         enabled = True,
         flag_sets = [
             flag_set(
-                actions = all_compile_actions,
-                flag_groups = [
-                    flag_group(
-                        flags = [
-                            # Security
-                            "-U_FORTIFY_SOURCE",  # https://github.com/google/sanitizers/issues/247
-                            "-fstack-protector",
-                            "-fno-omit-frame-pointer",
-                            # Diagnostics
-                            "-fcolor-diagnostics",
-                            "-Wall",
-                            "-Wthread-safety",
-                            "-Wself-assign",
-                        ],
-                    ),
-                ],
+                actions = all_link_actions,
+                flag_groups = [flag_group(flags = ["-lstdc++"])],
+                with_features = [with_feature_set(features = ["libstdc++"])],
             ),
+            flag_set(
+                actions = all_link_actions,
+                flag_groups = [flag_group(flags = ["-lc++"])],
+                with_features = [with_feature_set(features = ["libc++"])],
+            ),
+        ],
+    )
+
+    common_clibs_link_flags_feature = feature(
+        name = "common_clibs_link_flags",
+        enabled = True,
+        flag_sets = [flag_set(
+            actions = all_link_actions,
+            flag_groups = [flag_group(flags = ["-lpthread", "-lm"])],
+            with_features = [with_feature_set(features = ["common_clibs"])],
+        )],
+    )
+
+    unfiltered_compile_flags_feature = feature(
+        name = "unfiltered_compile_flags",
+        enabled = True,
+        flag_sets = [flag_set(
+            actions = all_compile_actions,
+            flag_groups = [flag_group(flags = [
+                # Do not resolve our symlinked resource prefixes to real paths.
+                "-no-canonical-prefixes",
+                # Reproducibility
+                "-Wno-builtin-macro-redefined",
+                "-D__DATE__=\"redacted\"",
+                "-D__TIMESTAMP__=\"redacted\"",
+                "-D__TIME__=\"redacted\"",
+                "-fdebug-prefix-map=%{toolchain_path_prefix}=%{debug_toolchain_path_prefix}",
+            ])],
+        )],
+    )
+
+    security_compile_flags_feature = feature(
+        name = "security_compile_flags",
+        enabled = True,
+        flag_sets = [flag_set(
+            actions = all_compile_actions,
+            flag_groups = [flag_group(flags = [
+                "-U_FORTIFY_SOURCE",  # https://github.com/google/sanitizers/issues/247
+                "-fstack-protector",
+                "-fno-omit-frame-pointer",
+            ])],
+        )],
+    )
+
+    diagnostic_compile_flags_feature = feature(
+        name = "diagnostic_compile_flags",
+        enabled = True,
+        flag_sets = [flag_set(
+            actions = all_compile_actions,
+            flag_groups = [flag_group(flags = [
+                "-fcolor-diagnostics",
+                "-Wall",
+                "-Werror",
+                "-Wthread-safety",
+                "-Wself-assign",
+            ])],
+        )],
+    )
+
+    pedantry_compile_flags_feature = feature(
+        name = "pedantry_compile_flags",
+        enabled = True,
+        flag_sets = [flag_set(
+            actions = all_compile_actions,
+            flag_groups = [flag_group(flags = [
+                "-Wextra",
+                "-Wpedantic",
+            ])],
+            with_features = [with_feature_set(features = ["pedantry"])],
+        )],
+    )
+
+    optimisation_compile_flags_feature = feature(
+        name = "optimisation_compile_flags",
+        enabled = True,
+        flag_sets = [
             flag_set(
                 actions = all_compile_actions,
                 flag_groups = [flag_group(flags = ["-g", "-fstandalone-debug"])],
@@ -260,23 +308,42 @@ def _impl(ctx):
             ),
             flag_set(
                 actions = all_compile_actions,
-                flag_groups = [
-                    flag_group(
-                        flags = [
-                            "-g0",
-                            "-O2",
-                            "-D_FORTIFY_SOURCE=1",
-                            "-DNDEBUG",
-                            "-ffunction-sections",
-                            "-fdata-sections",
-                        ],
-                    ),
-                ],
+                flag_groups = [flag_group(flags = [
+                    "-g0",
+                    "-O2",
+                    "-D_FORTIFY_SOURCE=1",
+                    "-DNDEBUG",
+                    "-ffunction-sections",
+                    "-fdata-sections",
+                ])],
                 with_features = [with_feature_set(features = ["opt"])],
+            ),
+        ],
+    )
+
+    cpp_standard_compile_flags_feature = feature(
+        name = "cpp_standard_compile_flags",
+        enabled = True,
+        flag_sets = [flag_set(
+            actions = all_cpp_compile_actions,
+            flag_groups = [flag_group(flags = ["-std=c++17"])],
+            with_features = [with_feature_set(features = ["c++17"])],
+        )],
+    )
+
+    cpp_standard_library_compile_flags_feature = feature(
+        name = "cpp_standard_library_compile_flags",
+        enabled = True,
+        flag_sets = [
+            flag_set(
+                actions = all_cpp_compile_actions,
+                flag_groups = [flag_group(flags = ["-stdlib=libstdc++"])],
+                with_features = [with_feature_set(features = ["libstdc++"])],
             ),
             flag_set(
                 actions = all_cpp_compile_actions,
-                flag_groups = [flag_group(flags = ["-std=c++17", "-stdlib=libc++"])],
+                flag_groups = [flag_group(flags = ["-stdlib=libc++"])],
+                with_features = [with_feature_set(features = ["libc++"])],
             ),
         ],
     )
@@ -284,45 +351,35 @@ def _impl(ctx):
     objcopy_embed_flags_feature = feature(
         name = "objcopy_embed_flags",
         enabled = True,
-        flag_sets = [
-            flag_set(
-                actions = ["objcopy_embed_data"],
-                flag_groups = [flag_group(flags = ["-I", "binary"])],
-            ),
-        ],
+        flag_sets = [flag_set(
+            actions = ["objcopy_embed_data"],
+            flag_groups = [flag_group(flags = ["-I", "binary"])],
+        )],
     )
 
     user_compile_flags_feature = feature(
         name = "user_compile_flags",
         enabled = True,
-        flag_sets = [
-            flag_set(
-                actions = all_compile_actions,
-                flag_groups = [
-                    flag_group(
-                        expand_if_available = "user_compile_flags",
-                        flags = ["%{user_compile_flags}"],
-                        iterate_over = "user_compile_flags",
-                    ),
-                ],
-            ),
+        flag_sets = [flag_set(
+            actions = all_compile_actions,
+            flag_groups = [flag_group(
+                expand_if_available = "user_compile_flags",
+                flags = ["%{user_compile_flags}"],
+                iterate_over = "user_compile_flags",
+            )]),
         ],
     )
 
     sysroot_feature = feature(
         name = "sysroot",
         enabled = True,
-        flag_sets = [
-            flag_set(
-                actions = all_compile_actions + all_link_actions,
-                flag_groups = [
-                    flag_group(
-                        expand_if_available = "sysroot",
-                        flags = ["--sysroot=%{sysroot}"],
-                    ),
-                ],
-            ),
-        ],
+        flag_sets = [flag_set(
+            actions = all_compile_actions + all_link_actions,
+            flag_groups = [flag_group(
+                expand_if_available = "sysroot",
+                flags = ["--sysroot=%{sysroot}"],
+            )]
+        )],
     )
 
     coverage_feature = feature(
@@ -330,11 +387,9 @@ def _impl(ctx):
         flag_sets = [
             flag_set(
                 actions = all_compile_actions,
-                flag_groups = [
-                    flag_group(
-                        flags = ["-fprofile-instr-generate", "-fcoverage-mapping"],
-                    ),
-                ],
+                flag_groups = [flag_group(
+                    flags = ["-fprofile-instr-generate", "-fcoverage-mapping"],
+                )],
             ),
             flag_set(
                 actions = all_link_actions,
@@ -346,46 +401,40 @@ def _impl(ctx):
 
     framework_paths_feature = feature(
         name = "framework_paths",
-        flag_sets = [
-            flag_set(
-                actions = [
-                    ACTION_NAMES.objc_compile,
-                    ACTION_NAMES.objcpp_compile,
-                    "objc-executable",
-                    "objc++-executable",
-                ],
-                flag_groups = [
-                    flag_group(
-                        flags = ["-F%{framework_paths}"],
-                        iterate_over = "framework_paths",
-                    ),
-                ],
-            ),
-        ],
+        flag_sets = [flag_set(
+            actions = [
+                ACTION_NAMES.objc_compile,
+                ACTION_NAMES.objcpp_compile,
+                "objc-executable",
+                "objc++-executable",
+            ],
+            flag_groups = [flag_group(
+                flags = ["-F%{framework_paths}"],
+                iterate_over = "framework_paths",
+            )],
+        )],
     )
 
     include_paths_feature = feature(
         name = "include_paths",
         enabled = True,
-        flag_sets = [
-            flag_set(
-                actions = preprocessor_compile_actions,
-                flag_groups = [
-                    flag_group(
-                        flags = ["/I%{quote_include_paths}"],
-                        iterate_over = "quote_include_paths",
-                    ),
-                    flag_group(
-                        flags = ["/I%{include_paths}"],
-                        iterate_over = "include_paths",
-                    ),
-                    flag_group(
-                        flags = ["/I%{system_include_paths}"],
-                        iterate_over = "system_include_paths",
-                    ),
-                ],
-            ),
-        ],
+        flag_sets = [flag_set(
+            actions = preprocessor_compile_actions,
+            flag_groups = [
+                flag_group(
+                    flags = ["/I%{quote_include_paths}"],
+                    iterate_over = "quote_include_paths",
+                ),
+                flag_group(
+                    flags = ["/I%{include_paths}"],
+                    iterate_over = "include_paths",
+                ),
+                flag_group(
+                    flags = ["/I%{system_include_paths}"],
+                    iterate_over = "system_include_paths",
+                ),
+            ]
+        )],
     )
 
     dependency_file_feature = feature(
@@ -401,12 +450,10 @@ def _impl(ctx):
                     ACTION_NAMES.cpp_module_compile,
                     ACTION_NAMES.cpp_header_parsing,
                 ],
-                flag_groups = [
-                    flag_group(
-                        expand_if_available = "dependency_file",
-                        flags = ["/DEPENDENCY_FILE", "%{dependency_file}"],
-                    ),
-                ],
+                flag_groups = [flag_group(
+                    expand_if_available = "dependency_file",
+                    flags = ["/DEPENDENCY_FILE", "%{dependency_file}"],
+                )],
             ),
         ],
     )
@@ -424,12 +471,10 @@ def _impl(ctx):
                     ACTION_NAMES.cpp_header_parsing,
                     ACTION_NAMES.cpp_module_codegen,
                 ],
-                flag_groups = [
-                    flag_group(
-                        expand_if_available = "source_file",
-                        flags = ["/c", "%{source_file}"],
-                    ),
-                ],
+                flag_groups = [flag_group(
+                    expand_if_available = "source_file",
+                    flags = ["/c", "%{source_file}"],
+                )],
             ),
         ],
     )
@@ -439,13 +484,11 @@ def _impl(ctx):
         flag_sets = [
             flag_set(
                 actions = [ACTION_NAMES.assemble],
-                flag_groups = [
-                    flag_group(
-                        expand_if_available = "output_file",
-                        expand_if_not_available = "output_assembly_file",
-                        flags = ["/Fo%{output_file}", "/Zi"],
-                    ),
-                ],
+                flag_groups = [flag_group(
+                    expand_if_available = "output_file",
+                    expand_if_not_available = "output_assembly_file",
+                    flags = ["/Fo%{output_file}", "/Zi"],
+                )],
             ),
             flag_set(
                 actions = [
@@ -482,9 +525,23 @@ def _impl(ctx):
         random_seed_feature,
         supports_pic_feature,
         supports_dynamic_linker_feature,
+        pedantry_feature,
+        cpp_standard_feature,
+        cpp17_feature,
+        cpp_standard_library_feature,
+        libstdcpp_feature,
+        libcpp_feature,
+        common_clibs_feature,
         unfiltered_compile_flags_feature,
         default_link_flags_feature,
-        default_compile_flags_feature,
+        cpp_standard_library_link_flags_feature,
+        common_clibs_link_flags_feature,
+        security_compile_flags_feature,
+        pedantry_compile_flags_feature,
+        optimisation_compile_flags_feature,
+        diagnostic_compile_flags_feature,
+        cpp_standard_compile_flags_feature,
+        cpp_standard_library_compile_flags_feature,
         objcopy_embed_flags_feature,
         user_compile_flags_feature,
         sysroot_feature,
