@@ -41,16 +41,32 @@ cc_toolchain_suite(
     },
 )
 
+cc_toolchain_suite(
+    name = "linuxcross",
+    toolchains = {
+        "arm-cross": "cc-clang-arm-on-linux",
+    },
+)
+
 load(":cc_toolchain_config.bzl", "cc_toolchain_config")
 
 cc_toolchain_config(
     name = "local_linux",
+    host_cpu = "k8",
     cpu = "k8",
 )
 
 cc_toolchain_config(
     name = "local_darwin",
+    host_cpu = "darwin",
     cpu = "darwin",
+)
+
+cc_toolchain_config(
+    name = "arm_on_linux",
+    host_cpu = "k8",
+    cpu = "armv7",
+    cross_target = "armhf-unknown-linux-gnu",
 )
 
 toolchain(
@@ -81,10 +97,25 @@ toolchain(
     toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
 )
 
+toolchain(
+    name = "cc-toolchain-arm-on-linux",
+    exec_compatible_with = [
+        "@bazel_tools//platforms:x86_64",
+        "@bazel_tools//platforms:linux",
+    ],
+    target_compatible_with = [
+        "@bazel_tools//platforms:armv7",
+        "@bazel_tools//platforms:linux",
+    ],
+    toolchain = ":cc-clang-arm-on-linux",
+    toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
+)
+
 load("@com_grail_bazel_toolchain//toolchain:rules.bzl", "conditional_cc_toolchain")
 
-conditional_cc_toolchain("cc-clang-linux", False, %{absolute_paths})
-conditional_cc_toolchain("cc-clang-darwin", True, %{absolute_paths})
+conditional_cc_toolchain("cc-clang-linux", "local_linux", %{absolute_paths})
+conditional_cc_toolchain("cc-clang-darwin", "local_darwin", %{absolute_paths})
+conditional_cc_toolchain("cc-clang-arm-on-linux", "arm-on-linux", %{absolute_paths})
 
 ## LLVM toolchain files
 # Needed when not using absolute paths.
