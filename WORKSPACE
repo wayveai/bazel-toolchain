@@ -44,13 +44,26 @@ filegroup(
     urls = ["https://commondatastorage.googleapis.com/chrome-linux-sysroot/toolchain/2202c161310ffde63729f29d27fe7bb24a0bc540/debian_stretch_amd64_sysroot.tar.xz"],
 )
 
+http_archive(
+    name = "org_chromium_sysroot_linux_arm",
+    build_file_content = """
+filegroup(
+  name = "sysroot",
+  srcs = glob(["*/**"]),
+  visibility = ["//visibility:public"],
+)
+""",
+    sha256 = "39d04a95b5f689ab443e58f7e2afc10dca5f61bca572ba926f80b74b23db12a4",
+    urls = ["https://commondatastorage.googleapis.com/chrome-linux-sysroot/toolchain/fAF64dEF2e32577c0572DFCb04C5eEE2/ubuntu_trusty_arm64_sysroot.tgz"],
+)
+
 llvm_toolchain(
     name = "llvm_toolchain_linux_sysroot",
-    llvm_version = "8.0.0",
+    llvm_version = "9.0.0",
     sysroot = {
         "linux": "@org_chromium_sysroot_linux_x64//:sysroot",
         "darwin": "@org_chromium_sysroot_linux_x64//:sysroot",
-        "arm": "@org_chromium_sysroot_linux_x64//:sysroot",
+        "aarch64": "@org_chromium_sysroot_linux_arm//:sysroot",
     },
 )
 
