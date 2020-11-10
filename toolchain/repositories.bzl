@@ -12,7 +12,7 @@ _sources_by_release = {
             "url":"http://releases.llvm.org/9.0.0/libcxxabi-9.0.0.src.tar.xz",
             "sha":"675041783565c906ac2f7f8b2bc5c40f14d871ecfa8ade34855aa18de95530e9",
         },
-    }
+    },
     "6.0.0": {
         "libcxx": {
             "url": "http://releases.llvm.org/6.0.0/libcxx-6.0.0.src.tar.xz",
@@ -22,7 +22,7 @@ _sources_by_release = {
             "url":"http://releases.llvm.org/6.0.0/libcxxabi-6.0.0.src.tar.xz",
             "sha":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         },
-    }
+    },
 }
 
 def bazel_toolchains_repositories(release):

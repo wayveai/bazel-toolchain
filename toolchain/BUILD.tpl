@@ -42,7 +42,7 @@ cc_toolchain_suite(
 )
 
 cc_toolchain_suite(
-    name = "linuxcross",
+    name = "armcross",
     toolchains = {
         "arm-cross": "cc-clang-arm-on-linux",
     },
@@ -65,8 +65,8 @@ cc_toolchain_config(
 cc_toolchain_config(
     name = "arm_on_linux",
     host_cpu = "k8",
-    cpu = "armv7",
-    cross_target = "armhf-unknown-linux-gnu",
+    cpu = "aarch64",
+    cross_target = "aarch64-unknown-linux-gnu",
 )
 
 toolchain(
@@ -104,7 +104,7 @@ toolchain(
         "@bazel_tools//platforms:linux",
     ],
     target_compatible_with = [
-        "@bazel_tools//platforms:armv7",
+        "@bazel_tools//platforms:aarch64",
         "@bazel_tools//platforms:linux",
     ],
     toolchain = ":cc-clang-arm-on-linux",
@@ -115,7 +115,7 @@ load("@com_grail_bazel_toolchain//toolchain:rules.bzl", "conditional_cc_toolchai
 
 conditional_cc_toolchain("cc-clang-linux", "local_linux", %{absolute_paths})
 conditional_cc_toolchain("cc-clang-darwin", "local_darwin", %{absolute_paths})
-conditional_cc_toolchain("cc-clang-arm-on-linux", "arm-on-linux", %{absolute_paths})
+conditional_cc_toolchain("cc-clang-arm-on-linux", "arm_on_linux", %{absolute_paths})
 
 ## LLVM toolchain files
 # Needed when not using absolute paths.

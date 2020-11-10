@@ -49,5 +49,10 @@ llvm_toolchain(
     llvm_version = "8.0.0",
     sysroot = {
         "linux": "@org_chromium_sysroot_linux_x64//:sysroot",
+        "darwin": "@org_chromium_sysroot_linux_x64//:sysroot",
+        "arm": "@org_chromium_sysroot_linux_x64//:sysroot",
     },
 )
+
+load("@com_grail_bazel_toolchain//toolchain:repositories.bzl", "bazel_toolchains_repositories")
+bazel_toolchains_repositories("9.0.0")

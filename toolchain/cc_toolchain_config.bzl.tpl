@@ -45,7 +45,7 @@ def _impl(ctx):
         toolchain_identifier = "clang-darwin"
     elif (cpu == "k8"):
         toolchain_identifier = "clang-linux"
-    elif (cpu == "armv7"):
+    elif (cpu == "aarch64"):
         toolchain_identifier = "clang-armhf"
     else:
         fail("Unreachable")
@@ -54,8 +54,8 @@ def _impl(ctx):
         host_system_name = "x86_64"
     elif (host_cpu == "darwin"):
         host_system_name = "x86_64-apple-macosx"
-    elif (host_cpu == "armv7"):
-        host_system_name = "armv7"
+    elif (host_cpu == "aarch64"):
+        host_system_name = "aarch64"
     else:
         fail("Unreachable")
 
@@ -72,14 +72,14 @@ def _impl(ctx):
         target_cpu = "darwin"
     elif (cpu == "k8"):
         target_cpu = "k8"
-    elif (cpu == "armv7"):
-        target_cpu = "armv7"
+    elif (cpu == "aarch64"):
+        target_cpu = "aarch64"
     else:
         fail("Unreachable")
 
     if (cpu == "k8"):
         target_libc = "glibc_unknown"
-    if (cpu == "armv7"):
+    elif (cpu == "aarch64"):
         target_libc = "glibc_unknown"
     elif (cpu == "darwin"):
         target_libc = "macosx"
@@ -88,14 +88,14 @@ def _impl(ctx):
 
     if (cpu == "darwin" or
         cpu == "k8" or
-        cpu == "armv7"):
+        cpu == "aarch64"):
         compiler = "clang"
     else:
         fail("Unreachable")
 
     if (cpu == "k8"):
         abi_version = "clang"
-    if (cpu == "armv7"):
+    elif (cpu == "aarch64"):
         abi_version = "clang"
     elif (cpu == "darwin"):
         abi_version = "darwin_x86_64"
@@ -106,7 +106,7 @@ def _impl(ctx):
         abi_libc_version = "darwin_x86_64"
     elif (cpu == "k8"):
         abi_libc_version = "glibc_unknown"
-    elif (cpu == "armv7"):
+    elif (cpu == "aarch64"):
         abi_libc_version = "glibc_unknown"
     else:
         fail("Unreachable")
@@ -115,7 +115,7 @@ def _impl(ctx):
 
     if (cpu == "darwin" or
         cpu == "k8" or
-        cpu == "armv7"):
+        cpu == "aarch64"):
         builtin_sysroot = "%{sysroot_path}"
     else:
         fail("Unreachable")
@@ -610,7 +610,7 @@ def _impl(ctx):
     if (cpu == "darwin"):
         features.extend([framework_paths_feature])
 
-    if (cpu == "k8" or cpu == "armv7"):
+    if (cpu == "k8" or cpu == "aarch64"):
         cxx_builtin_include_directories = [
             "%{toolchain_path_prefix}include/c++/v1",
             "%{toolchain_path_prefix}lib/clang/%{llvm_version}/include",
@@ -644,12 +644,12 @@ def _impl(ctx):
         ]
     elif (cpu == "k8"):
         make_variables = []
-    elif (cpu == "armv7"):
+    elif (cpu == "aarch64"):
         make_variables = []
     else:
         fail("Unreachable")
 
-    if (cpu == "k8" or cpu == "armv7"):
+    if (cpu == "k8" or cpu == "aarch64"):
         tool_paths = [
             tool_path(
                 name = "ld",
@@ -760,7 +760,7 @@ cc_toolchain_config = rule(
             values = [
                 "darwin",
                 "k8",
-                "armv7",
+                "aarch64",
             ],
         ),
         "cross_target": attr.string(),
@@ -768,7 +768,7 @@ cc_toolchain_config = rule(
             values = [
                 "darwin",
                 "k8",
-                "armv7",
+                "aarch64",
             ],
         ),
     },
