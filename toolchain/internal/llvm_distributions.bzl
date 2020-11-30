@@ -84,6 +84,57 @@ _llvm_distributions = {
     "clang+llvm-9.0.0-armv7a-linux-gnueabihf.tar.xz": "ff6046bf98dbc85d7cb0c3c70456bc002b99a809bfc115657db2683ba61752ec",
     "clang+llvm-9.0.0-i386-unknown-freebsd11.tar.xz": "2d8d0b712946d6bc76317c4093ce77634ef6d502c343e1f3f6b841401db8fa56",
     "clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz": "a23b082b30c128c9831dbdd96edad26b43f56624d0ad0ea9edec506f5385038d",
+    "clang+llvm-9.0.0-x86_64-darwin-apple.tar.xz": "b46e3fe3829d4eb30ad72993bf28c76b1e1f7e38509fbd44192a2ef7c0126fc7",
+
+    # 10.0.0
+    # "clang+llvm-10.0.0-x86_64-pc-linux-gnu.tar.xz": "", As of this writing, Ubuntu 19.10 binaries are not released.
+    # "clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz": "", As of this writing, Ubuntu 16.04 binaries are not released.
+    "clang+llvm-10.0.0-amd64-pc-solaris2.11.tar.xz": "aaf6865542bd772e30be3abf620340a050ed5e4297f8be347e959e5483d9f159",
+    "clang+llvm-10.0.0-powerpc64le-linux-ubuntu-16.04.tar.xz": "2d6298720d6aae7fcada4e909f0949d63e94fd0370d20b8882cdd91ceae7511c",
+    "clang+llvm-10.0.0-x86_64-linux-sles11.3.tar.xz": "a7a3c2a7aff813bb10932636a6f1612e308256a5e6b5a5655068d5c5b7f80e86",
+    "clang+llvm-10.0.0-amd64-unknown-freebsd11.tar.xz": "56d58da545743d5f2947234d413632fd2b840e38f2bed7369f6e65531af36a52",
+    "clang+llvm-10.0.0-powerpc64le-linux-rhel-7.4.tar.xz": "958b8a774eae0bb25515d7fb2f13f5ead1450f768ffdcff18b29739613b3c457",
+    # "clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz": "",  As of this writing, Ubuntu 14.04 binaries are not yet released.
+    "clang+llvm-10.0.0-aarch64-linux-gnu.tar.xz": "c2072390dc6c8b4cc67737f487ef384148253a6a97b38030e012c4d7214b7295",
+    "clang+llvm-10.0.0-sparcv9-sun-solaris2.11.tar.xz": "725c9205550cabb6d8e0d8b1029176113615809dcc880b347c1577aecdf2af4c",
+    # "clang+llvm-10.0.0-armv7a-linux-gnueabihf.tar.xz": "", As of this writing, armv7a Linux binaries are not yet released.
+    "clang+llvm-10.0.0-i386-unknown-freebsd11.tar.xz": "310ed47e957c226b0de17130711505366c225edbed65299ac2c3d59f9a59a41a",
+    "clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz": "b25f592a0c00686f03e3b7db68ca6dc87418f681f4ead4df4745a01d9be63843",
+    "clang+llvm-10.0.0-x86_64-apple-darwin.tar.xz": "633a833396bf2276094c126b072d52b59aca6249e7ce8eae14c728016edb5e61",
+
+    # 10.0.1
+    "clang+llvm-10.0.1-aarch64-linux-gnu.tar.xz": "90dc69a4758ca15cd0ffa45d07fbf5bf4309d47d2c7745a9f0735ecffde9c31f",
+    "clang+llvm-10.0.1-amd64-unknown-freebsd11.tar.xz": "290897c328f75df041d1abda6e25a50c2e6a0a3d939b5069661bb966bf7ac843",
+    "clang+llvm-10.0.1-armv7a-linux-gnueabihf.tar.xz": "adf90157520cd5e0931b9f186bed0f0463feda56370de4eba51766946f57b02b",
+    "clang+llvm-10.0.1-i386-unknown-freebsd11.tar.xz": "f404976ad92cf846b7915cd43cd251e090a5e7524809ab96f5a65216988b2b26",
+    "clang+llvm-10.0.1-powerpc64le-linux-rhel-7.4.tar.xz": "27359cae558905bf190834db11bbeaea433777a360744e9f79bfe69226a19117",
+    "clang+llvm-10.0.1-powerpc64le-linux-ubuntu-16.04.tar.xz": "c19edf5c1f5270ae9124a3873e689a3309a9ad075373a75c0791abf4bf72602e",
+    "clang+llvm-10.0.1-x86_64-apple-darwin.tar.xz": "1154a24597ab77801980dfd5ae4a13c117d6b482bab015baa410aeba443ffd92",
+    "clang+llvm-10.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz": "48b83ef827ac2c213d5b64f5ad7ed082c8bcb712b46644e0dc5045c6f462c231",
+    "clang+llvm-10.0.1-x86_64-linux-sles12.4.tar.xz": "59f35fc7967b740315edf31a54b228ae5da8a54f499e37d424d67b7107217ae4",
+
+    # 11.0.0
+    "clang+llvm-11.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz": "abfe77fa4c2ceda16455fac9dba58962af9173c5aa85d5bb8ca4f5165ef87a19",
+    "clang+llvm-11.0.0-x86_64-linux-sles12.4.tar.xz": "ce3e2e9788e0136f3082eb3199c6e2dd171f4e7c98310f83fc284c5ba734d27a",
+    "clang+llvm-11.0.0-sparcv9-sun-solaris2.11.tar.xz": "3f2bbbbd9aac9809bcc561d73b0db39ecd64fa099fac601f929da5e95a63bdc5",
+    "clang+llvm-11.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz": "829f5fb0ebda1d8716464394f97d5475d465ddc7bea2879c0601316b611ff6db",
+    "clang+llvm-11.0.0-amd64-pc-solaris2.11.tar.xz": "031699337d703fe42843a8326f94079fd67e46b60f25be5bdf47664e158e0b43",
+    "clang+llvm-11.0.0-x86_64-apple-darwin.tar.xz": "b93886ab0025cbbdbb08b46e5e403a462b0ce034811c929e96ed66c2b07fe63a",
+}
+
+# Note: Unlike the user-specified llvm_mirror attribute, the URL prefixes in
+# this map are not immediately appended with "/". This is because LLVM prebuilt
+# URLs changed when they switched to hosting the files on GitHub as of 10.0.0.
+_llvm_distributions_base_url = {
+    "6.0.0": "https://releases.llvm.org/",
+    "6.0.1": "https://releases.llvm.org/",
+    "7.0.0": "https://releases.llvm.org/",
+    "8.0.0": "https://releases.llvm.org/",
+    "8.0.1": "https://releases.llvm.org/",
+    "9.0.0": "https://releases.llvm.org/",
+    "10.0.0": "https://github.com/llvm/llvm-project/releases/download/llvmorg-",
+    "10.0.1": "https://github.com/llvm/llvm-project/releases/download/llvmorg-",
+    "11.0.0": "https://github.com/llvm/llvm-project/releases/download/llvmorg-",
 }
 
 def _python(rctx):
@@ -104,10 +155,9 @@ def _python(rctx):
 def download_llvm_preconfigured(rctx):
     llvm_version = rctx.attr.llvm_version
 
-    url_base = []
+    mirror_base = []
     if rctx.attr.llvm_mirror:
-        url_base += [rctx.attr.llvm_mirror]
-    url_base += ["https://releases.llvm.org"]
+        mirror_base += [rctx.attr.llvm_mirror]
 
     if rctx.attr.distribution == "auto":
         exec_result = rctx.execute([
@@ -126,9 +176,13 @@ def download_llvm_preconfigured(rctx):
     if basename not in _llvm_distributions:
         fail("Unknown LLVM release: %s\nPlease ensure file name is correct." % basename)
 
+    url_suffix = "{0}/{1}".format(llvm_version, basename).replace("+", "%2B")
     urls = [
-        (base + "/{0}/{1}".format(llvm_version, basename)).replace("+", "%2B")
-        for base in url_base
+        "{0}{1}".format(_llvm_distributions_base_url[llvm_version], url_suffix),
+    ]
+    urls += [
+        "{0}/{1}".format(base, url_suffix)
+        for base in mirror_base
     ]
 
     rctx.download_and_extract(

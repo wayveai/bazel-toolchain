@@ -1,4 +1,4 @@
-LLVM toolchain for Bazel [![Build Status](https://travis-ci.org/grailbio/bazel-toolchain.svg?branch=master)](https://travis-ci.org/grailbio/bazel-toolchain)
+LLVM toolchain for Bazel ![Tests](https://github.com/grailbio/bazel-toolchain/workflows/Tests/badge.svg?branch=master) ![Migration](https://github.com/grailbio/bazel-toolchain/workflows/Migration/badge.svg?branch=master)
 =================
 
 NOTE: As of 2200d53, this project requires bazel 1.0 or up.
@@ -11,6 +11,10 @@ http_archive(
     strip_prefix = "bazel-toolchain-master",
     urls = ["https://github.com/grailbio/bazel-toolchain/archive/master.tar.gz"],
 )
+
+load("@com_grail_bazel_toolchain//toolchain:deps.bzl", "bazel_toolchain_dependencies")
+
+bazel_toolchain_dependencies()
 
 load("@com_grail_bazel_toolchain//toolchain:rules.bzl", "llvm_toolchain")
 
@@ -39,7 +43,7 @@ cc_toolchain_config template. See [tutorial](
 https://github.com/bazelbuild/bazel/blob/master/site/docs/tutorial/cc-toolchain-config.md).
 
 For overriding toolchains on the command line, please use the
-`--extra_toolchains` flag in lieu of the deprecated `--crosstools_top` flag.
+`--extra_toolchains` flag in lieu of the deprecated `--crosstool_top` flag.
 For example, `--extra_toolchains=@llvm_toolchain//:cc-toolchain-linux`.
 
 If you would like to use the older method of selecting toolchains, you can

@@ -21,6 +21,7 @@ load(
     "@com_grail_bazel_toolchain//toolchain/internal:sysroot.bzl",
     _sysroot_path = "sysroot_path",
 )
+load("@rules_cc//cc:defs.bzl", _cc_toolchain = "cc_toolchain")
 
 def _makevars_ld_flags(rctx):
     if rctx.os.name == "mac os x":
@@ -36,6 +37,14 @@ def _include_dirs_str(rctx, cpu):
     return ("\n" + 12 * " ").join(["\"%s\"," % d for d in dirs])
 
 def llvm_toolchain_impl(rctx):
+    if rctx.os.name.startswith("windows"):
+        rctx.file("BUILD")
+        rctx.file("toolchains.bzl", """
+def llvm_register_toolchains():
+    pass
+        """)
+        return
+
     repo_path = str(rctx.path(""))
     relative_path_prefix = "external/%s/" % rctx.name
     if rctx.attr.absolute_paths:
@@ -107,9 +116,8 @@ def conditional_cc_toolchain(name, darwin, absolute_paths = False):
     toolchain_identifier = "clang-darwin" if darwin else "clang-linux"
 
     if absolute_paths:
-        native.cc_toolchain(
+        _cc_toolchain(
             name = name,
-            toolchain_config = toolchain_config,
             all_files = ":empty",
             compiler_files = ":empty",
             dwp_files = ":empty",
@@ -117,22 +125,25 @@ def conditional_cc_toolchain(name, darwin, absolute_paths = False):
             objcopy_files = ":empty",
             strip_files = ":empty",
             supports_param_files = 0 if darwin else 1,
+            toolchain_config = toolchain_config,
         )
     else:
         extra_files = [":cc_wrapper"] if darwin else []
         native.filegroup(name = name + "-all-files", srcs = [":all_components"] + extra_files)
+        native.filegroup(name = name + "-archiver-files", srcs = [":ar"] + extra_files)
+        native.filegroup(name = name + "-assembler-files", srcs = [":as"] + extra_files)
         native.filegroup(name = name + "-compiler-files", srcs = [":compiler_components"] + extra_files)
         native.filegroup(name = name + "-linker-files", srcs = [":linker_components"] + extra_files)
-        native.cc_toolchain(
+        _cc_toolchain(
             name = name,
-            toolchain_config = toolchain_config,
             all_files = name + "-all-files",
+            ar_files = name + "-archiver-files",
+            as_files = name + "-assembler-files",
             compiler_files = name + "-compiler-files",
-            ar_files = ":ar",
-            as_files = ":as",
             dwp_files = ":empty",
             linker_files = name + "-linker-files",
             objcopy_files = ":objcopy",
             strip_files = ":empty",
             supports_param_files = 0 if darwin else 1,
+            toolchain_config = toolchain_config,
         )

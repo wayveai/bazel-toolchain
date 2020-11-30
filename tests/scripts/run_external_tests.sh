@@ -15,42 +15,29 @@
 
 set -euo pipefail
 
-toolchain_name=""
-
-while getopts "t:h" opt; do
-  case "$opt" in
-    "t") toolchain_name="$OPTARG";;
-    "h") echo "Usage:"
-       echo "-t - Toolchain name to use for testing; default is llvm_toolchain"
-       exit 2
-       ;;
-    "?") echo "invalid option: -$OPTARG"; exit 1;;
-  esac
-done
-
 os="$(uname -s | tr "[:upper:]" "[:lower:]")"
 readonly os
 
-# Use bazelisk to catch migration problems.
+# Use bazelisk for latest bazel version.
 # Value of BAZELISK_GITHUB_TOKEN is set as a secret on Travis.
-readonly bazelisk_version="v1.6.1"
-readonly url="https://github.com/bazelbuild/bazelisk/releases/download/${bazelisk_version}/bazelisk-${os}-amd64"
+readonly url="https://github.com/bazelbuild/bazelisk/releases/download/v1.0/bazelisk-${os}-amd64"
 bazel="${TMPDIR:-/tmp}/bazelisk"
 readonly bazel
 
 curl -L -sSf -o "${bazel}" "${url}"
 chmod a+x "${bazel}"
 
-set -x
 "${bazel}" version
+
+# We exclude cc_libs_test from rules_go because it assumes that stdlibc++ has
+# been dynamically linked, but we link it statically on linux.
 "${bazel}" ${TEST_MIGRATION+"--migrate"} --bazelrc=/dev/null test \
-  --extra_toolchains="${toolchain_name}" \
   --incompatible_enable_cc_toolchain_resolution \
-  --copt=-v \
-  --linkopt=-Wl,-t \
   --symlink_prefix=/ \
   --color=yes \
   --show_progress_rate_limit=30 \
   --keep_going \
   --test_output=errors \
-  //...
+  @openssl//:libssl \
+  $("${bazel}" query 'attr(timeout, short, tests(@com_google_absl//absl/...))') \
+  $("${bazel}" query 'tests(@io_bazel_rules_go//tests/core/cgo:all) except @io_bazel_rules_go//tests/core/cgo:cc_libs_test')

@@ -14,7 +14,12 @@
 
 package(default_visibility = ["//visibility:public"])
 
+load("@rules_cc//cc:defs.bzl", "cc_toolchain_suite")
+
 exports_files(["Makevars"])
+
+# Some targets may need to directly depend on these files.
+exports_files(glob(["bin/*", "lib/*"]))
 
 filegroup(
     name = "empty",
@@ -56,12 +61,12 @@ cc_toolchain_config(
 toolchain(
     name = "cc-toolchain-darwin",
     exec_compatible_with = [
-        "@bazel_tools//platforms:x86_64",
-        "@bazel_tools//platforms:osx",
+        "@platforms//cpu:x86_64",
+        "@platforms//os:osx",
     ],
     target_compatible_with = [
-        "@bazel_tools//platforms:x86_64",
-        "@bazel_tools//platforms:osx",
+        "@platforms//cpu:x86_64",
+        "@platforms//os:osx",
     ],
     toolchain = ":cc-clang-darwin",
     toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
@@ -70,12 +75,12 @@ toolchain(
 toolchain(
     name = "cc-toolchain-linux",
     exec_compatible_with = [
-        "@bazel_tools//platforms:x86_64",
-        "@bazel_tools//platforms:linux",
+        "@platforms//cpu:x86_64",
+        "@platforms//os:linux",
     ],
     target_compatible_with = [
-        "@bazel_tools//platforms:x86_64",
-        "@bazel_tools//platforms:linux",
+        "@platforms//cpu:x86_64",
+        "@platforms//os:linux",
     ],
     toolchain = ":cc-clang-linux",
     toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
@@ -146,7 +151,10 @@ filegroup(
 
 filegroup(
     name = "as",
-    srcs = ["bin/llvm-as"],
+    srcs = [
+        "bin/clang",
+        "bin/llvm-as",
+    ],
 )
 
 filegroup(
@@ -194,6 +202,7 @@ filegroup(
     srcs = [
         ":clang",
         ":ld",
+        ":ar",
         ":lib",
         ":sysroot_components",
     ],
