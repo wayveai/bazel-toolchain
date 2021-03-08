@@ -104,6 +104,7 @@ filegroup(
         "bin/ld.lld",
         "bin/ld",
         "bin/ld.gold",  # Dummy file on non-linux.
+        "bin/lld",
     ],
 )
 
